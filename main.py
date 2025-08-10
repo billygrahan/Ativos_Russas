@@ -10,6 +10,7 @@ import openpyxl
 from BFS import bfs
 from DFS import dfs
 from BCU import bcu
+from A_ESTRELA import a_estrela, heuristica_euclidiana, heuristica_haversiana
 
 
 def memoria_alocada():
@@ -28,13 +29,12 @@ def memoria_alocada():
 # }
 
 def main():
-    sys.setrecursionlimit(1000000)
+    # sys.setrecursionlimit(1000000)
     
     graph_distance = {}
     graph_coordinates = {}
     
-    with open("USA-road-d.E.gr", "r") as arquivo:  
-
+    with open("RUSSAS_MAPA.gr", "r") as arquivo:  
         for linha in arquivo:
             linha_dividida = linha.split()
                 
@@ -47,8 +47,7 @@ def main():
             else:
                 graph_distance[vertice_origem][vertice_destino] = vertice_distancia
                 
-    with open("USA-road-d.E.co", "r") as arquivo:  
-
+    with open("RUSSAS_MAPA.co", "r") as arquivo:  
         for linha in arquivo:        
             linha_dividida = linha.split()
             
@@ -70,11 +69,15 @@ def main():
         pagina = planilha[nome_planilha]
         pagina.sheet_format.baseColWidth = 30
         pagina.append(['Índice', 'Origem', 'Destino', 'Quantidade de nós expandidos', 'Fator de ramificação médio', 'Tempo', 'Memória Alocada'])
-    
+
+        # qtd de testes
         for row in range(50):
             random.seed()
-            origem = random.randint(1, 3598623)
-            destino = random.randint(1, 3598623)
+            
+            qtd_vertices = len(graph_coordinates)
+            # Gera um par de vértices aleatórios
+            origem = random.randint(1, qtd_vertices)
+            destino = random.randint(1, qtd_vertices)
             
             if nome_planilha == 'BFS':
                 inicio_bfs = time.time()
@@ -99,7 +102,7 @@ def main():
             if nome_planilha == 'DFS':     
                 inicio_dfs = time.time()
                 memoria_antes_dfs = memoria_alocada()
-                dfs(graph_distance, origem, destino)
+                rota_dfs, quantidade_nos_expandidos_dfs, quantidade_filhos_dfs = dfs(graph_distance, origem, destino)
                 memoria_depois_dfs = memoria_alocada()
                 fim_dfs = time.time()
                 
