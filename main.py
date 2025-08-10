@@ -4,6 +4,8 @@ import os
 import random
 import time
 import sys
+
+# pip install psutil openpyxl
 import psutil
 import openpyxl
 
