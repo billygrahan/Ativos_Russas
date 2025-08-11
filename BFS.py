@@ -5,6 +5,8 @@ import random
 import time
 import sys
 
+# Busca em Largura (BFS)
+
 def bfs(graph_distance, origem, destino):
     cores = {}
     distancias = {}

@@ -70,10 +70,10 @@ def main():
     for nome_planilha in algoritmos:
         pagina = planilha[nome_planilha]
         pagina.sheet_format.baseColWidth = 30
-        pagina.append(['Índice', 'Origem', 'Destino', 'Quantidade de nós expandidos', 'Fator de ramificação médio', 'Tempo', 'Memória Alocada'])
+        pagina.append(['Índice', 'Origem', 'Destino', 'Caminho', 'Quantidade de nós expandidos', 'Fator de ramificação médio', 'Tempo', 'Memória Alocada'])
 
         # qtd de testes
-        for row in range(50):
+        for row in range(1):
             random.seed()
             
             qtd_vertices = len(graph_coordinates)
@@ -99,7 +99,7 @@ def main():
                 print(f"Tempo de execução da Busca em Largura: {tempo}")
                 print(f"Memória Alocada para a Busca em Largura: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, quantidade_nos_expandidos_bfs, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_bfs), quantidade_nos_expandidos_bfs, fator_ramificacao, tempo, memoria])
             
             if nome_planilha == 'DFS':     
                 inicio_dfs = time.time()
@@ -119,7 +119,7 @@ def main():
                 print(f"Tempo de execução da Busca em Profundidade: {tempo}")
                 print(f"Memória Alocada para a Busca em Profundidade: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, quantidade_nos_expandidos_dfs, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_dfs), quantidade_nos_expandidos_dfs, fator_ramificacao, tempo, memoria])
     
             if nome_planilha == 'BCU':
                 inicio_bcu = time.time()
@@ -130,7 +130,11 @@ def main():
                 
                 tempo = fim_bcu - inicio_bcu
                 memoria = memoria_depois_bcu - memoria_antes_bcu
-                fator_ramificacao = (quantidade_nos_expandidos_bcu - 1) / quantidade_filhos_bcu
+
+                if quantidade_filhos_bcu != 0:
+                    fator_ramificacao = (quantidade_nos_expandidos_bcu - 1) / quantidade_filhos_bcu
+                else:
+                    fator_ramificacao = 0
 
                 print(f"\nOrigem do Busca de Custo Uniforme: {origem}")
                 print(f"Destino do Busca de Custo Uniforme: {destino}")
@@ -139,7 +143,7 @@ def main():
                 print(f"Tempo de execução da Busca de Custo Uniforme: {tempo}")
                 print(f"Memória Alocada para a Busca de Custo Uniforme: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, quantidade_nos_expandidos_bcu, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_bcu), quantidade_nos_expandidos_bcu, fator_ramificacao, tempo, memoria])
             
             if nome_planilha == 'A_Estrela_Euclidiano':
                 inicio_a_estrela = time.time()
@@ -159,7 +163,7 @@ def main():
                 print(f"Tempo de execução do A Estrela Euclidiano: {tempo}")
                 print(f"Memória Alocada para o A Estrela Euclidiano: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
                 
             if nome_planilha == 'A_Estrela_Haversiano':
                 inicio_a_estrela = time.time()
@@ -178,8 +182,9 @@ def main():
                 print(f"Fator de ramificação médio no A Estrela Haversiano: {fator_ramificacao}")
                 print(f"Tempo de execução do A Estrela Haversiano: {tempo}")
                 print(f"Memória Alocada para o A Estrela Haversiano: {memoria} bytes\n")
+                print(f"Rota encontrada: {rota_a_estrela}")
                 
-                pagina.append([f"{row + 1}", origem, destino, quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
     
     planilha.save('Relatório.xlsx')
         

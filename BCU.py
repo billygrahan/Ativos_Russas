@@ -5,6 +5,8 @@ import random
 import time
 import sys
 
+# Busca de Custo Uniforme (BCU)
+
 def bcu(grafo, origem, destino):
     # Inicia a fila com o custo 0 e a origem
     fila_prioridade = [(0, origem)]
