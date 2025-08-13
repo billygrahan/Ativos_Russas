@@ -54,8 +54,8 @@ def main():
             linha_dividida = linha.split()
             
             vertice_origem = int(linha_dividida[1])
-            coordenada1 = int(linha_dividida[2])
-            coordenada2 = int(linha_dividida[3])
+            coordenada1 = float(linha_dividida[2]) / 1_000_000
+            coordenada2 = float(linha_dividida[3]) / 1_000_000
             
             graph_coordinates[vertice_origem] = (coordenada1, coordenada2)
             
