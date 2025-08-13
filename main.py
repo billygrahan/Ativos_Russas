@@ -66,6 +66,18 @@ def main():
     
     for nome_planilha in algoritmos:
         planilha.create_sheet(nome_planilha)
+
+    
+    pontos = []
+    for rota in range(3):
+        random.seed()
+        
+        qtd_vertices = len(graph_coordinates)
+        # Gera um par de vértices aleatórios
+        origem = random.randint(1, qtd_vertices)
+        destino = random.randint(1, qtd_vertices)
+
+        pontos.append((origem, destino))
         
     for nome_planilha in algoritmos:
         pagina = planilha[nome_planilha]
@@ -73,13 +85,10 @@ def main():
         pagina.append(['Índice', 'Origem', 'Destino', 'Caminho', 'Quantidade de nós expandidos', 'Fator de ramificação médio', 'Tempo', 'Memória Alocada'])
 
         # qtd de testes
-        for row in range(1):
-            random.seed()
-            
-            qtd_vertices = len(graph_coordinates)
-            # Gera um par de vértices aleatórios
-            origem = random.randint(1, qtd_vertices)
-            destino = random.randint(1, qtd_vertices)
+        for test in pontos:
+            row = 0
+            origem = test[0]
+            destino = test[1]
             
             if nome_planilha == 'BFS':
                 inicio_bfs = time.time()
@@ -166,6 +175,7 @@ def main():
                 pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
                 
             if nome_planilha == 'A_Estrela_Haversiano':
+
                 inicio_a_estrela = time.time()
                 memoria_antes_a_estrela = memoria_alocada()
                 heuristica = a_estrela(graph_distance, graph_coordinates, origem, destino, heuristica_haversiana) 
@@ -185,8 +195,10 @@ def main():
                 print(f"Rota encontrada: {rota_a_estrela}")
                 
                 pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
-    
+                
+            row += 1
     planilha.save('Relatório.xlsx')
+
         
 if __name__ == "__main__":
     main()
