@@ -20,16 +20,6 @@ def memoria_alocada():
     return processo.memory_info().rss
 
 
-# Grafo de teste
-# graph_distance = {
-#     1: {2: 2, 3: 3},
-#     2: {1: 2, 4: 4, 5: 1},
-#     3: {1: 3, 6: 5},
-#     4: {2: 4},
-#     5: {2: 1, 6: 2},
-#     6: {3: 5, 5: 2}
-# }
-
 def main():
     # sys.setrecursionlimit(1000000)
     
@@ -82,7 +72,7 @@ def main():
     for nome_planilha in algoritmos:
         pagina = planilha[nome_planilha]
         pagina.sheet_format.baseColWidth = 30
-        pagina.append(['Índice', 'Origem', 'Destino', 'Caminho', 'Quantidade de nós expandidos', 'Fator de ramificação médio', 'Tempo', 'Memória Alocada'])
+        pagina.append(['Índice', 'Origem', 'Destino', 'Caminho', 'Distancia', 'Quantidade de nós expandidos', 'Fator de ramificação médio', 'Tempo', 'Memória Alocada'])
 
         # qtd de testes
         for test in pontos:
@@ -108,7 +98,7 @@ def main():
                 print(f"Tempo de execução da Busca em Largura: {tempo}")
                 print(f"Memória Alocada para a Busca em Largura: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, str(rota_bfs), quantidade_nos_expandidos_bfs, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_bfs), 0, quantidade_nos_expandidos_bfs, fator_ramificacao, tempo, memoria])
             
             if nome_planilha == 'DFS':     
                 inicio_dfs = time.time()
@@ -128,7 +118,7 @@ def main():
                 print(f"Tempo de execução da Busca em Profundidade: {tempo}")
                 print(f"Memória Alocada para a Busca em Profundidade: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, str(rota_dfs), quantidade_nos_expandidos_dfs, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_dfs), 0, quantidade_nos_expandidos_dfs, fator_ramificacao, tempo, memoria])
     
             if nome_planilha == 'BCU':
                 inicio_bcu = time.time()
@@ -152,13 +142,13 @@ def main():
                 print(f"Tempo de execução da Busca de Custo Uniforme: {tempo}")
                 print(f"Memória Alocada para a Busca de Custo Uniforme: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, str(rota_bcu), quantidade_nos_expandidos_bcu, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_bcu), 0, quantidade_nos_expandidos_bcu, fator_ramificacao, tempo, memoria])
             
             if nome_planilha == 'A_Estrela_Euclidiano':
                 inicio_a_estrela = time.time()
                 memoria_antes_a_estrela = memoria_alocada()
                 heuristica = a_estrela(graph_distance, graph_coordinates, origem, destino, heuristica_euclidiana) 
-                rota_a_estrela, quantidade_nos_expandidos_a_estrela, fator_ramificacao = heuristica # type: ignore
+                rota_a_estrela, distancia_percorrida, quantidade_nos_expandidos_a_estrela, fator_ramificacao = heuristica # type: ignore
                 memoria_depois_a_estrela = memoria_alocada()
                 fim_a_estrela = time.time()
                 
@@ -172,14 +162,14 @@ def main():
                 print(f"Tempo de execução do A Estrela Euclidiano: {tempo}")
                 print(f"Memória Alocada para o A Estrela Euclidiano: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), distancia_percorrida, quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
                 
             if nome_planilha == 'A_Estrela_Haversiano':
 
                 inicio_a_estrela = time.time()
                 memoria_antes_a_estrela = memoria_alocada()
                 heuristica = a_estrela(graph_distance, graph_coordinates, origem, destino, heuristica_haversiana) 
-                rota_a_estrela, quantidade_nos_expandidos_a_estrela, fator_ramificacao = heuristica # type: ignore
+                rota_a_estrela, distancia_percorrida, quantidade_nos_expandidos_a_estrela, fator_ramificacao = heuristica # type: ignore
                 fim_a_estrela = memoria_alocada()
                 destino_a_estrela = time.time()
                 
@@ -194,7 +184,7 @@ def main():
                 print(f"Memória Alocada para o A Estrela Haversiano: {memoria} bytes\n")
                 print(f"Rota encontrada: {rota_a_estrela}")
                 
-                pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), distancia_percorrida, quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
                 
             row += 1
     planilha.save('Relatório.xlsx')

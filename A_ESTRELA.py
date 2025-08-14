@@ -52,6 +52,12 @@ def reconstruir_caminho(onde_veio, atual):
     caminho_total.reverse()
     return caminho_total
 
+def distancia_caminho(caminho, grafo):
+    distancia = 0
+    for i in range(len(caminho) - 1):
+        distancia += grafo[caminho[i]][caminho[i + 1]]
+    return distancia
+
 def a_estrela(graph_distance, graph_coordinates, origem, destino, heuristica):
     lista_aberta = [origem]
     visitados = []
@@ -75,8 +81,9 @@ def a_estrela(graph_distance, graph_coordinates, origem, destino, heuristica):
         visitados.append(atual)
 
         # Verifica se encontrou o caminho
+        caminho = reconstruir_caminho(onde_veio, atual)
         if atual == destino:
-            return reconstruir_caminho(onde_veio, atual), len(visitados), fator_de_ramificação_a_estrela(graph_distance)
+            return caminho, distancia_caminho(caminho, graph_distance), len(visitados), fator_de_ramificação_a_estrela(graph_distance)
 
         lista_aberta.remove(atual)
 
