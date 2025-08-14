@@ -69,7 +69,7 @@ def main():
 
     
     pontos = []
-    for rota in range(3):
+    for rota in range(5):
         random.seed()
         
         qtd_vertices = len(graph_coordinates)
