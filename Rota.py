@@ -27,7 +27,7 @@ inicio = 5
 ativos = []
 
 alg = 'A_Estrela_Haversiano' 
-iteracoes = 1000
+iteracoes = 10000
 
 def algoritmo(origem, destino):
     if alg == 'A_Estrela_Euclidiano':
@@ -122,8 +122,6 @@ def recalcula_distancias(melhor_rota_copia):
             distancia_percorrida = distancia_entre_ativos[origem][destino]
             melhor_rota_copia[i+1] = (destino, melhor_rota_copia[i][1] + distancia_percorrida)
 
-
-
 def Roleta():
     global melhor_rota, distancia_entre_ativos , inicio, ativos , graph_dist, graph_Coordenadas
     
@@ -141,11 +139,13 @@ def Roleta():
 
     return melhor_rota_copia
 
-    
-
 def melhorar():
     global melhor_rota, distancia_entre_ativos , inicio, ativos , graph_dist, graph_Coordenadas
 
+    for _ in range(iteracoes):
+        melhor_rota_copia = Roleta()
+        if melhor_rota_copia[-1][1] < melhor_rota[-1][1]:
+            melhor_rota = melhor_rota_copia
         
 
 
@@ -155,27 +155,32 @@ if __name__ == "__main__":
 
     Construir()
 
+    print("rota inicial:")
+    print(" -> ".join(str(tupla) for tupla in melhor_rota))
+
+    melhorar()
+
     print("Melhor rota:")
     print(" -> ".join(str(tupla) for tupla in melhor_rota))
 
-    print("\nDistâncias entre ativos:")
-    for origem in distancia_entre_ativos:
-        for destino in distancia_entre_ativos[origem]:
-            print(f"{origem} -> {destino}: {distancia_entre_ativos[origem][destino]}")
+    # print("\nDistâncias entre ativos:")
+    # for origem in distancia_entre_ativos:
+    #     for destino in distancia_entre_ativos[origem]:
+    #         print(f"{origem} -> {destino}: {distancia_entre_ativos[origem][destino]}")
 
-    print("\nCaminho entre ativos:")
-    for caminho in caminho_entre_ativos:
-        print(" -> ".join(str(vertice) for vertice in caminho))
+    # print("\nCaminho entre ativos:")
+    # for caminho in caminho_entre_ativos:
+    #     print(" -> ".join(str(vertice) for vertice in caminho))
     
-    melhor_rota_copia = Roleta()
+    # melhor_rota_copia = Roleta()
 
-    print("Melhor rota:")
-    print(" -> ".join(str(tupla) for tupla in melhor_rota_copia))
+    # print("Melhor rota:")
+    # print(" -> ".join(str(tupla) for tupla in melhor_rota_copia))
 
-    print("\nDistâncias entre ativos:")
-    for origem in distancia_entre_ativos:
-        for destino in distancia_entre_ativos[origem]:
-            print(f"{origem} -> {destino}: {distancia_entre_ativos[origem][destino]}")
+    # print("\nDistâncias entre ativos:")
+    # for origem in distancia_entre_ativos:
+    #     for destino in distancia_entre_ativos[origem]:
+    #         print(f"{origem} -> {destino}: {distancia_entre_ativos[origem][destino]}")
 
 
 
