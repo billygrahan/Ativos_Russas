@@ -47,10 +47,12 @@ def carrega_teste():
     
     qtd_ativos_teste = 5
     ativos = random.sample(range(1, qtd_vertices + 1), qtd_ativos_teste)
-    
+
+    # Inicializa as distâncias entre os ativos
     distancia_entre_ativos[inicio] = {}
     for ativo in ativos:
         distancia_entre_ativos[ativo] = {}
+    
 
 def Carrega_Dados():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos
@@ -150,6 +152,7 @@ def melhorar():
 
 
 if __name__ == "__main__":
+    random.seed(141592)
     Carrega_Dados()
     carrega_teste()
 
