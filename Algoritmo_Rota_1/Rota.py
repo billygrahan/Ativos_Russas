@@ -9,10 +9,10 @@ import copy
 import psutil
 import openpyxl
 
-from BFS import bfs
-from DFS import dfs
-from BCU import bcu
-from A_ESTRELA import a_estrela, heuristica_euclidiana, heuristica_haversiana
+from Algoritmos.BFS import bfs
+from Algoritmos.DFS import dfs
+from Algoritmos.BCU import bcu
+from Algoritmos.A_ESTRELA import a_estrela, heuristica_euclidiana, heuristica_haversiana
 
 melhor_rota = []
 distancia_entre_ativos = {}
@@ -40,20 +40,7 @@ def algoritmo(origem, destino):
         return dfs(graph_dist, origem, destino)
     elif alg == 'BCU':
         return bcu(graph_dist, origem, destino)
-
-def carrega_teste():
-    global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos
-    qtd_vertices = len(graph_Coordenadas)
-    
-    qtd_ativos_teste = 5
-    ativos = random.sample(range(1, qtd_vertices + 1), qtd_ativos_teste)
-
-    # Inicializa as distâncias entre os ativos
-    distancia_entre_ativos[inicio] = {}
-    for ativo in ativos:
-        distancia_entre_ativos[ativo] = {}
-    
-
+ 
 def Carrega_Dados():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos
     
@@ -140,7 +127,7 @@ def Roleta():
     recalcula_distancias(melhor_rota_copia)
 
     return melhor_rota_copia
-
+   
 def melhorar():
     global melhor_rota, distancia_entre_ativos , inicio, ativos , graph_dist, graph_Coordenadas
 
@@ -149,6 +136,44 @@ def melhorar():
         if melhor_rota_copia[-1][1] < melhor_rota[-1][1]:
             melhor_rota = melhor_rota_copia
         
+def carrega_teste():
+    global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos, melhor_rota, caminho_entre_ativos, alg, iteracoes
+
+    id = 0
+    
+    #algoritmos = ['BFS', 'DFS', 'BCU', 'A_Estrela_Euclidiano', 'A_Estrela_Haversiano']
+    planilha = openpyxl.Workbook()
+    del planilha['Sheet']
+    planilha.create_sheet(alg)
+
+    pagina = planilha[alg]
+    pagina.sheet_format.baseColWidth = 30
+    pagina.append(['Índice', 'Origem', 'Ativos', 'melhor_caminho', 'Distancia', 'Tempo'])
+
+    for _ in range(10): # qtd de testes
+        melhor_rota = []
+        caminho_entre_ativos = []
+        distancia_entre_ativos = {}
+        ativos = []
+
+        qtd_vertices = len(graph_Coordenadas)
+
+        inicio = random.randint(1, qtd_vertices)
+        #qtd_ativos_teste = random.randint(1, qtd_vertices-1)
+        ativos = random.sample(range(1, qtd_vertices + 1), 5)
+
+        # Inicializa as distâncias entre os ativos
+        distancia_entre_ativos[inicio] = {}
+        for ativo in ativos:
+            distancia_entre_ativos[ativo] = {}
+
+        Construir()
+        melhorar()
+        pagina.append([id, inicio, ", ".join(str(a) for a in ativos), " -> ".join(str(a[0]) for a in melhor_rota), melhor_rota[-1][1], 0])
+        id += 1
+
+    planilha.save("Ativos_Russas.xlsx")
+
 
 
 if __name__ == "__main__":
@@ -156,15 +181,15 @@ if __name__ == "__main__":
     Carrega_Dados()
     carrega_teste()
 
-    Construir()
+    # Construir()
 
-    print("rota inicial:")
-    print(" -> ".join(str(tupla) for tupla in melhor_rota))
+    # print("rota inicial:")
+    # print(" -> ".join(str(tupla) for tupla in melhor_rota))
 
-    melhorar()
+    # melhorar()
 
-    print("Melhor rota:")
-    print(" -> ".join(str(tupla) for tupla in melhor_rota))
+    # print("Melhor rota:")
+    # print(" -> ".join(str(tupla) for tupla in melhor_rota))
 
     # print("\nDistâncias entre ativos:")
     # for origem in distancia_entre_ativos:

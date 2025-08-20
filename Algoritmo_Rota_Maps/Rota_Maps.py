@@ -5,16 +5,13 @@ import psutil
 import openpyxl
 import openrouteservice
 
-
 melhor_rota = []
 distancia_entre_ativos = {}
-
 coordenadas = {}
 
 inicio = 5
 ativos = []
 
-#alg = 'A_Estrela_Haversiano' 
 iteracoes = 10000
 
 def Carrega_Dados():

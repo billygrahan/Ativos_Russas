@@ -9,10 +9,10 @@ import sys
 import psutil
 import openpyxl
 
-from BFS import bfs
-from DFS import dfs
-from BCU import bcu
-from A_ESTRELA import a_estrela, heuristica_euclidiana, heuristica_haversiana
+from Algoritmos.BFS import bfs
+from Algoritmos.DFS import dfs
+from Algoritmos.BCU import bcu
+from Algoritmos.A_ESTRELA import a_estrela, heuristica_euclidiana, heuristica_haversiana
 
 
 def memoria_alocada():
