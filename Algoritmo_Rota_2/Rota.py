@@ -47,7 +47,7 @@ def Carrega_Dados():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos
     
     filepath = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA.gr")
-    with open(filepath, "r") as arquivo: 
+    with open(filepath, "r") as arquivo:
         for linha in arquivo:
             linha_dividida = linha.split()
                 
@@ -61,7 +61,7 @@ def Carrega_Dados():
                 graph_dist[vertice_origem][vertice_destino] = vertice_distancia
                 
     filepath_co = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA.co")
-    with open(filepath_co, "r") as arquivo:    
+    with open(filepath_co, "r") as arquivo:  
         for linha in arquivo:        
             linha_dividida = linha.split()
             
@@ -71,32 +71,20 @@ def Carrega_Dados():
             
             graph_Coordenadas[vertice_origem] = (coordenada1, coordenada2)
 
-def Construir():
-    global melhor_rota, distancia_entre_ativos , inicio, ativos , graph_dist, graph_Coordenadas
+def Roleta(roleta):
+    objetos = [obj for obj, dist in roleta]
+    distancias = [dist for obj, dist in roleta]
 
-    melhor_rota.append((inicio, 0))
+    for obj, dist in roleta:
+        if dist == 0:
+            return obj
 
-    caminho_inicial = random.sample(ativos, len(ativos))
+    pesos = [1/(d if d > 0 else 1e-6) for d in distancias]
+    total_peso = sum(pesos)
+    probabilidades = [p/total_peso for p in pesos]
 
-    for i in range(len(caminho_inicial)+1):
-        if i == 0:
-            heuristica = algoritmo(inicio, caminho_inicial[i])
-            rota_encontrada, distancia_percorrida, quantidade_nos_expandidos, fator_ramificacao = heuristica
-            distancia_entre_ativos[inicio][caminho_inicial[i]] = distancia_percorrida
-            caminho_entre_ativos.append(rota_encontrada)
-            melhor_rota.append((caminho_inicial[i], melhor_rota[-1][1] + distancia_percorrida))
-        elif i >= (len(caminho_inicial)):
-            heuristica = algoritmo(caminho_inicial[i-1], inicio)
-            rota_encontrada, distancia_percorrida, quantidade_nos_expandidos, fator_ramificacao = heuristica
-            distancia_entre_ativos[caminho_inicial[i-1]][inicio] = distancia_percorrida
-            caminho_entre_ativos.append(rota_encontrada)
-            melhor_rota.append((inicio, melhor_rota[-1][1] + distancia_percorrida))
-        else:
-            heuristica = algoritmo(caminho_inicial[i-1], caminho_inicial[i])
-            rota_encontrada, distancia_percorrida, quantidade_nos_expandidos, fator_ramificacao = heuristica
-            distancia_entre_ativos[caminho_inicial[i-1]][caminho_inicial[i]] = distancia_percorrida
-            caminho_entre_ativos.append(rota_encontrada)
-            melhor_rota.append((caminho_inicial[i], melhor_rota[-1][1] + distancia_percorrida))
+    escolhido = random.choices(objetos, weights=probabilidades, k=1)[0]
+    return escolhido
 
 def recalcula_distancias(melhor_rota_copia):
     global distancia_entre_ativos , inicio, ativos , graph_dist, graph_Coordenadas
@@ -115,31 +103,47 @@ def recalcula_distancias(melhor_rota_copia):
             distancia_percorrida = distancia_entre_ativos[origem][destino]
             melhor_rota_copia[i+1] = (destino, melhor_rota_copia[i][1] + distancia_percorrida)
 
-def Roleta():
-    global melhor_rota, distancia_entre_ativos , inicio, ativos , graph_dist, graph_Coordenadas
-    
-    roleta = random.sample(range(1, melhor_rota[-1][1]), 1)
+def Gerar_Solucao():
+    global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos, melhor_rota, caminho_entre_ativos, alg, iteracoes
 
-    melhor_rota_copia = copy.deepcopy(melhor_rota)
+    melhor_rota_copia = []
+    ativos_copia = ativos.copy()
+    origem = inicio
 
-    for i in range(len(melhor_rota_copia)-2, 1, -1):
-        if roleta[0] <= melhor_rota_copia[i][1]:
-            elemento = melhor_rota_copia.pop(i)
-            pos = random.randint(1, len(melhor_rota_copia)-1)
-            melhor_rota_copia.insert(pos, elemento)
-    
+    while len(ativos_copia) > 0:
+        roleta = []
+
+        melhor_rota_copia.append((origem, 0))
+
+        for ativo in ativos_copia:
+            if ativo not in distancia_entre_ativos[origem]:
+                rota_encontrada, distancia, quantidade_nos_expandidos, fator_ramificacao = algoritmo(origem, ativo)
+                caminho_entre_ativos.append(rota_encontrada)
+                distancia_entre_ativos[origem][ativo] = distancia
+                roleta.append((ativo, distancia))
+            else:
+                roleta.append((ativo, distancia_entre_ativos[origem][ativo]))
+
+        elemento = Roleta(roleta)
+
+        melhor_rota_copia.append((elemento, 0))
+
+        ativos_copia.remove(elemento)
+        origem = elemento
     recalcula_distancias(melhor_rota_copia)
-
     return melhor_rota_copia
-   
-def melhorar():
-    global melhor_rota, distancia_entre_ativos , inicio, ativos , graph_dist, graph_Coordenadas
 
+
+def melhorar_Rota():
+    global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos, melhor_rota, caminho_entre_ativos, alg, iteracoes
+    
     for _ in range(iteracoes):
-        melhor_rota_copia = Roleta()
-        if melhor_rota_copia[-1][1] < melhor_rota[-1][1]:
+        melhor_rota_copia = Gerar_Solucao()
+
+        if melhor_rota == [] or melhor_rota_copia[-1][1] < melhor_rota[-1][1]:
             melhor_rota = melhor_rota_copia
         
+
 def carrega_teste():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos, melhor_rota, caminho_entre_ativos, alg, iteracoes
 
@@ -171,8 +175,8 @@ def carrega_teste():
         for ativo in ativos:
             distancia_entre_ativos[ativo] = {}
 
-        Construir()
-        melhorar()
+        melhorar_Rota()
+
         pagina.append([id, inicio, ", ".join(str(a) for a in ativos), " -> ".join(str(a[0]) for a in melhor_rota), melhor_rota[-1][1], 0])
         id += 1
 
@@ -181,39 +185,6 @@ def carrega_teste():
 
 
 if __name__ == "__main__":
-    random.seed(141592)
-    Carrega_Dados()
-    carrega_teste()
-
-    # Construir()
-
-    # print("rota inicial:")
-    # print(" -> ".join(str(tupla) for tupla in melhor_rota))
-
-    # melhorar()
-
-    # print("Melhor rota:")
-    # print(" -> ".join(str(tupla) for tupla in melhor_rota))
-
-    # print("\nDistâncias entre ativos:")
-    # for origem in distancia_entre_ativos:
-    #     for destino in distancia_entre_ativos[origem]:
-    #         print(f"{origem} -> {destino}: {distancia_entre_ativos[origem][destino]}")
-
-    # print("\nCaminho entre ativos:")
-    # for caminho in caminho_entre_ativos:
-    #     print(" -> ".join(str(vertice) for vertice in caminho))
     
-    # melhor_rota_copia = Roleta()
-
-    # print("Melhor rota:")
-    # print(" -> ".join(str(tupla) for tupla in melhor_rota_copia))
-
-    # print("\nDistâncias entre ativos:")
-    # for origem in distancia_entre_ativos:
-    #     for destino in distancia_entre_ativos[origem]:
-    #         print(f"{origem} -> {destino}: {distancia_entre_ativos[origem][destino]}")
-
-
-
-
+    Carrega_Dados()
+    carrega_teste() 
