@@ -46,7 +46,7 @@ def algoritmo(origem, destino):
 def Carrega_Dados():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos
     
-    filepath = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA.gr")
+    filepath = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N42.gr")
     with open(filepath, "r") as arquivo:
         for linha in arquivo:
             linha_dividida = linha.split()
@@ -60,14 +60,14 @@ def Carrega_Dados():
             else:
                 graph_dist[vertice_origem][vertice_destino] = vertice_distancia
                 
-    filepath_co = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA.co")
+    filepath_co = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N42.co")
     with open(filepath_co, "r") as arquivo:  
         for linha in arquivo:        
             linha_dividida = linha.split()
             
             vertice_origem = int(linha_dividida[1])
-            coordenada1 = float(linha_dividida[2]) / 1_000_000
-            coordenada2 = float(linha_dividida[3]) / 1_000_000
+            coordenada1 = float(linha_dividida[2])
+            coordenada2 = float(linha_dividida[3])
             
             graph_Coordenadas[vertice_origem] = (coordenada1, coordenada2)
 
@@ -175,9 +175,11 @@ def carrega_teste():
         for ativo in ativos:
             distancia_entre_ativos[ativo] = {}
 
+        inicio_tempo = time.time()
         melhorar_Rota()
+        tempo_Rota = time.time() - inicio_tempo
 
-        pagina.append([id, inicio, ", ".join(str(a) for a in ativos), " -> ".join(str(a[0]) for a in melhor_rota), melhor_rota[-1][1], 0])
+        pagina.append([id, inicio, ", ".join(str(a) for a in ativos), " -> ".join(str(a[0]) for a in melhor_rota), melhor_rota[-1][1], tempo_Rota])
         id += 1
 
     planilha.save("Algoritmo_Rota_2/Ativos_Russas.xlsx")
