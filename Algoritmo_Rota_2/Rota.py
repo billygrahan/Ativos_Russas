@@ -110,10 +110,10 @@ def Gerar_Solucao():
     ativos_copia = ativos.copy()
     origem = inicio
 
+    melhor_rota_copia.append((origem, 0))
+
     while len(ativos_copia) > 0:
         roleta = []
-
-        melhor_rota_copia.append((origem, 0))
 
         for ativo in ativos_copia:
             if ativo not in distancia_entre_ativos[origem]:
@@ -130,24 +130,31 @@ def Gerar_Solucao():
 
         ativos_copia.remove(elemento)
         origem = elemento
+
+    # Adiciona o ponto de origem ao final da rota
+    if inicio not in distancia_entre_ativos[origem]:
+        rota_encontrada, distancia, quantidade_nos_expandidos, fator_ramificacao = algoritmo(origem, inicio)
+        caminho_entre_ativos.append(rota_encontrada)
+        distancia_entre_ativos[origem][inicio] = distancia
+        melhor_rota_copia.append((inicio, 0))
+    else:
+        melhor_rota_copia.append((inicio, 0))
+
     recalcula_distancias(melhor_rota_copia)
     return melhor_rota_copia
-
 
 def melhorar_Rota():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos, melhor_rota, caminho_entre_ativos, alg, iteracoes
     
-    for _ in range(iteracoes):
+    for i in range(iteracoes):
         melhor_rota_copia = Gerar_Solucao()
 
         if melhor_rota == [] or melhor_rota_copia[-1][1] < melhor_rota[-1][1]:
             melhor_rota = melhor_rota_copia
-        
+    
 
 def carrega_teste():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos, melhor_rota, caminho_entre_ativos, alg, iteracoes
-
-    id = 0
     
     #algoritmos = ['BFS', 'DFS', 'BCU', 'A_Estrela_Euclidiano', 'A_Estrela_Haversiano']
     planilha = openpyxl.Workbook()
@@ -158,35 +165,40 @@ def carrega_teste():
     pagina.sheet_format.baseColWidth = 30
     pagina.append(['Índice', 'Origem', 'Ativos', 'melhor_caminho', 'Distancia', 'Tempo'])
 
-    for _ in range(10): # qtd de testes
-        melhor_rota = []
-        caminho_entre_ativos = []
-        distancia_entre_ativos = {}
-        ativos = []
+    sementes = [141592,653589,793238,462643,383279,502884,197169,399375,105820,974944,592307,816406,286208,998628,34825,342117,67982,148086,513282,306647,93844,609550,582231,725359,408128,481117,450284,102701,938521,105559]
+    
+    for c in range(10): # qtd de testes
 
-        qtd_vertices = len(graph_Coordenadas)
+        for i in sementes:
+            random.seed(i)
+            melhor_rota = []
+            caminho_entre_ativos = []
+            distancia_entre_ativos = {}
+            ativos = []
 
-        inicio = random.randint(1, qtd_vertices)
-        #qtd_ativos_teste = random.randint(1, qtd_vertices-1)
-        ativos = random.sample(range(1, qtd_vertices + 1), 5)
+            qtd_vertices = len(graph_Coordenadas)
 
-        # Inicializa as distâncias entre os ativos
-        distancia_entre_ativos[inicio] = {}
-        for ativo in ativos:
-            distancia_entre_ativos[ativo] = {}
+            inicio = random.randint(1, qtd_vertices)
+            #qtd_ativos_teste = random.randint(1, qtd_vertices-1)
+            ativos = random.sample(range(1, qtd_vertices + 1), 5)
 
-        inicio_tempo = time.time()
-        melhorar_Rota()
-        tempo_Rota = time.time() - inicio_tempo
+            # Inicializa as distâncias entre os ativos
+            distancia_entre_ativos[inicio] = {}
+            for ativo in ativos:
+                distancia_entre_ativos[ativo] = {}
 
-        pagina.append([id, inicio, ", ".join(str(a) for a in ativos), " -> ".join(str(a[0]) for a in melhor_rota), melhor_rota[-1][1], tempo_Rota])
-        id += 1
+            inicio_tempo = time.time()
+            melhorar_Rota()
+            tempo_Rota = time.time() - inicio_tempo
+
+            #print(f"{c} ; {i} = {melhor_rota[-1][1]} ; {tempo_Rota}")
+
+            pagina.append([c, inicio, ", ".join(str(a) for a in ativos), " -> ".join(str(a[0]) for a in melhor_rota), melhor_rota[-1][1], tempo_Rota])
 
     planilha.save("Algoritmo_Rota_2/Ativos_Russas.xlsx")
 
 
 
 if __name__ == "__main__":
-    
     Carrega_Dados()
     carrega_teste() 

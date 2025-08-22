@@ -26,7 +26,7 @@ def main():
     graph_distance = {}
     graph_coordinates = {}
     
-    with open("RUSSAS_MAPA.gr", "r") as arquivo:  
+    with open("RUSSAS_MAPA_N42.gr", "r") as arquivo:  
         for linha in arquivo:
             linha_dividida = linha.split()
                 
@@ -39,13 +39,13 @@ def main():
             else:
                 graph_distance[vertice_origem][vertice_destino] = vertice_distancia
                 
-    with open("RUSSAS_MAPA.co", "r") as arquivo:  
+    with open("RUSSAS_MAPA_N42.co", "r") as arquivo:  
         for linha in arquivo:        
             linha_dividida = linha.split()
             
             vertice_origem = int(linha_dividida[1])
-            coordenada1 = float(linha_dividida[2]) / 1_000_000
-            coordenada2 = float(linha_dividida[3]) / 1_000_000
+            coordenada1 = float(linha_dividida[2])
+            coordenada2 = float(linha_dividida[3])
             
             graph_coordinates[vertice_origem] = (coordenada1, coordenada2)
             
