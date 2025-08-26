@@ -54,7 +54,4 @@ def dfs(graph_distance, origem, destino):
     cores = {v: "Branco" for v in graph_distance.keys()}
     dfs_recursivo(origem, destino, cores, [], 0)
 
-    if melhor_rota is not None:
-        return melhor_rota, melhor_distancia, quantidade_nos_expandidos_dfs, quantidade_filhos_dfs
-    else:
-        return [], float('inf'), quantidade_nos_expandidos_dfs, quantidade_filhos_dfs
+    return melhor_rota, melhor_distancia, quantidade_nos_expandidos_dfs, quantidade_filhos_dfs

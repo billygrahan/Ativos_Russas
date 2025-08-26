@@ -32,13 +32,13 @@ qtd_vertices = 0
 inicio = 5
 ativos = []
 
-alg = 'BFS' 
+alg = '' 
 iteracoes = 1000
 
 def algoritmo(origem, destino):
-    if alg == 'A_Estrela_Euclidiano':
+    if alg == 'A_Estrela_Haversiano':
         return a_estrela(graph_dist, graph_Coordenadas, origem, destino, heuristica_haversiana)
-    elif alg == 'A_Estrela_Haversiano':
+    elif alg == 'A_Estrela_Euclidiano':
         return a_estrela(graph_dist, graph_Coordenadas, origem, destino, heuristica_euclidiana)
     elif alg == 'BFS':
         return bfs(graph_dist, origem, destino)
@@ -259,11 +259,12 @@ def carrega_media_testes():
 
         pagina.append([c, todas_distancias / len(sementes), max(lista_melores_rotas), min(lista_melores_rotas), todos_tempos / len(sementes)])
     texto = nome_arquivo_saida.split("\n")
-    planilha.save(f"Planilhas/{texto[0]}")
+    planilha.save(f"{texto[0]}")
 
 if __name__ == "__main__":
     qtd_ativos = int(sys.argv[1])
     nome_arquivo_entrada = sys.argv[2]
     nome_arquivo_saida = sys.argv[3]
+    alg = sys.argv[4].strip()
     Carrega_Dados()
     carrega_media_testes()

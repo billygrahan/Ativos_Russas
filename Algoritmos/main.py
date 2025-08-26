@@ -21,11 +21,11 @@ def memoria_alocada():
 
 
 def main():
-    # sys.setrecursionlimit(1000000)
+    sys.setrecursionlimit(1000000)
     
     graph_distance = {}
     graph_coordinates = {}
-    filepath_gr = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N42.gr")
+    filepath_gr = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N81.gr")
     with open(filepath_gr, "r") as arquivo:
         for linha in arquivo:
             linha_dividida = linha.split()
@@ -38,7 +38,7 @@ def main():
                 graph_distance[vertice_origem] = {vertice_destino:vertice_distancia}
             else:
                 graph_distance[vertice_origem][vertice_destino] = vertice_distancia
-    filepath_co = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N42.co")
+    filepath_co = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N81.co")
     with open(filepath_co, "r") as arquivo: 
         for linha in arquivo:        
             linha_dividida = linha.split()
