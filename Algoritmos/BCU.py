@@ -45,11 +45,16 @@ def bcu(grafo, origem, destino):
                 nos_gerados += 1
 
     # Refaz o caminho
-    caminho_minimo = [destino] 
-    vertice_atual = destino 
-    while vertice_atual != origem: 
-        caminho_minimo.append(predecessores[vertice_atual]) 
-        vertice_atual = predecessores[vertice_atual] 
-    caminho_minimo.reverse() 
+    caminho_minimo = [destino]
+    vertice_atual = destino
+    while vertice_atual != origem:
+        caminho_minimo.append(predecessores[vertice_atual])
+        vertice_atual = predecessores[vertice_atual]
+    caminho_minimo.reverse()
 
-    return caminho_minimo, nos_expandidos, nos_gerados
+    # Calcula a distância total do caminho
+    distancia_total = 0
+    for i in range(len(caminho_minimo) - 1):
+        distancia_total += grafo[caminho_minimo[i]][caminho_minimo[i+1]]
+
+    return caminho_minimo, distancia_total, nos_expandidos, nos_gerados

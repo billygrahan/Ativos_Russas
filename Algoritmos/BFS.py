@@ -61,16 +61,18 @@ def bfs(graph_distance, origem, destino):
 
     rota = []
     caminho_atual = destino
-    
+
     # Começa a procurar a rota
     while caminho_atual != origem:
         caminho_atual = predecessores[caminho_atual]
         rota.append(caminho_atual)
-    
-    # Inverte a lista para obter a rota da origem ao destino
+
     rota.reverse()
-    
-    # Adiciona o destino à rota
     rota.append(destino)
-    
-    return rota, quantidade_nos_expandidos_bfs, quantidade_filhos_bfs
+
+    # Calcula a distância total do caminho
+    distancia_total = 0
+    for i in range(len(rota) - 1):
+        distancia_total += graph_distance[rota[i]][rota[i+1]]
+
+    return rota, distancia_total, quantidade_nos_expandidos_bfs, quantidade_filhos_bfs

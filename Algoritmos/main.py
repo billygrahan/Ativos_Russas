@@ -9,10 +9,10 @@ import sys
 import psutil
 import openpyxl
 
-from Algoritmos.BFS import bfs
-from Algoritmos.DFS import dfs
-from Algoritmos.BCU import bcu
-from Algoritmos.A_ESTRELA import a_estrela, heuristica_euclidiana, heuristica_haversiana
+from BFS import bfs
+from DFS import dfs
+from BCU import bcu
+from A_ESTRELA import a_estrela, heuristica_euclidiana, heuristica_haversiana
 
 
 def memoria_alocada():
@@ -25,8 +25,8 @@ def main():
     
     graph_distance = {}
     graph_coordinates = {}
-    
-    with open("RUSSAS_MAPA_N42.gr", "r") as arquivo:  
+    filepath_gr = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N42.gr")
+    with open(filepath_gr, "r") as arquivo:
         for linha in arquivo:
             linha_dividida = linha.split()
                 
@@ -38,8 +38,8 @@ def main():
                 graph_distance[vertice_origem] = {vertice_destino:vertice_distancia}
             else:
                 graph_distance[vertice_origem][vertice_destino] = vertice_distancia
-                
-    with open("RUSSAS_MAPA_N42.co", "r") as arquivo:  
+    filepath_co = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N42.co")
+    with open(filepath_co, "r") as arquivo: 
         for linha in arquivo:        
             linha_dividida = linha.split()
             
@@ -64,8 +64,7 @@ def main():
         
         qtd_vertices = len(graph_coordinates)
         # Gera um par de vértices aleatórios
-        origem = random.randint(1, qtd_vertices)
-        destino = random.randint(1, qtd_vertices)
+        origem, destino = random.sample(range(1, qtd_vertices + 1), 2)
 
         pontos.append((origem, destino))
         
@@ -83,7 +82,7 @@ def main():
             if nome_planilha == 'BFS':
                 inicio_bfs = time.time()
                 memoria_antes_bfs = memoria_alocada()
-                rota_bfs, quantidade_nos_expandidos_bfs, quantidade_filhos_bfs = bfs(graph_distance, origem, destino)
+                rota_bfs, distancia, quantidade_nos_expandidos_bfs, quantidade_filhos_bfs = bfs(graph_distance, origem, destino)
                 memoria_depois_bfs = memoria_alocada()
                 fim_bfs = time.time()
 
@@ -98,12 +97,12 @@ def main():
                 print(f"Tempo de execução da Busca em Largura: {tempo}")
                 print(f"Memória Alocada para a Busca em Largura: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, str(rota_bfs), 0, quantidade_nos_expandidos_bfs, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_bfs), distancia, quantidade_nos_expandidos_bfs, fator_ramificacao, tempo, memoria])
             
             if nome_planilha == 'DFS':     
                 inicio_dfs = time.time()
                 memoria_antes_dfs = memoria_alocada()
-                rota_dfs, quantidade_nos_expandidos_dfs, quantidade_filhos_dfs = dfs(graph_distance, origem, destino)
+                rota_dfs, distancia, quantidade_nos_expandidos_dfs, quantidade_filhos_dfs = dfs(graph_distance, origem, destino)
                 memoria_depois_dfs = memoria_alocada()
                 fim_dfs = time.time()
                 
@@ -118,12 +117,12 @@ def main():
                 print(f"Tempo de execução da Busca em Profundidade: {tempo}")
                 print(f"Memória Alocada para a Busca em Profundidade: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, str(rota_dfs), 0, quantidade_nos_expandidos_dfs, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_dfs), distancia, quantidade_nos_expandidos_dfs, fator_ramificacao, tempo, memoria])
     
             if nome_planilha == 'BCU':
                 inicio_bcu = time.time()
                 memoria_antes_bcu = memoria_alocada()
-                rota_bcu, quantidade_nos_expandidos_bcu, quantidade_filhos_bcu = bcu(graph_distance, origem, destino)
+                rota_bcu, distancia, quantidade_nos_expandidos_bcu, quantidade_filhos_bcu = bcu(graph_distance, origem, destino)
                 memoria_depois_bcu = memoria_alocada()
                 fim_bcu = time.time()
                 
@@ -142,7 +141,7 @@ def main():
                 print(f"Tempo de execução da Busca de Custo Uniforme: {tempo}")
                 print(f"Memória Alocada para a Busca de Custo Uniforme: {memoria} bytes\n")
                 
-                pagina.append([f"{row + 1}", origem, destino, str(rota_bcu), 0, quantidade_nos_expandidos_bcu, fator_ramificacao, tempo, memoria])
+                pagina.append([f"{row + 1}", origem, destino, str(rota_bcu), distancia, quantidade_nos_expandidos_bcu, fator_ramificacao, tempo, memoria])
             
             if nome_planilha == 'A_Estrela_Euclidiano':
                 inicio_a_estrela = time.time()
@@ -187,7 +186,7 @@ def main():
                 pagina.append([f"{row + 1}", origem, destino, str(rota_a_estrela), distancia_percorrida, quantidade_nos_expandidos_a_estrela, fator_ramificacao, tempo, memoria])
                 
             row += 1
-    planilha.save('Relatório.xlsx')
+    planilha.save('Algoritmos/Relatório.xlsx')
 
         
 if __name__ == "__main__":

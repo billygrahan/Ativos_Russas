@@ -16,6 +16,10 @@ from Algoritmos.DFS import dfs
 from Algoritmos.BCU import bcu
 from Algoritmos.A_ESTRELA import a_estrela, heuristica_euclidiana, heuristica_haversiana
 
+qtd_ativos = 0
+nome_arquivo_entrada = ''
+nome_arquivo_saida = ''
+
 melhor_rota = []
 distancia_entre_ativos = {}
 caminho_entre_ativos = []
@@ -28,8 +32,8 @@ qtd_vertices = 0
 inicio = 5
 ativos = []
 
-alg = 'A_Estrela_Haversiano' 
-iteracoes = 10000
+alg = 'BFS' 
+iteracoes = 1000
 
 def algoritmo(origem, destino):
     if alg == 'A_Estrela_Euclidiano':
@@ -45,8 +49,8 @@ def algoritmo(origem, destino):
  
 def Carrega_Dados():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos
-    
-    filepath = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N42.gr")
+
+    filepath = os.path.join(os.path.dirname(__file__), f"{nome_arquivo_entrada}.gr")
     with open(filepath, "r") as arquivo:
         for linha in arquivo:
             linha_dividida = linha.split()
@@ -59,10 +63,10 @@ def Carrega_Dados():
                 graph_dist[vertice_origem] = {vertice_destino:vertice_distancia}
             else:
                 graph_dist[vertice_origem][vertice_destino] = vertice_distancia
-                
-    filepath_co = os.path.join(os.path.dirname(__file__), "RUSSAS_MAPA_N42.co")
-    with open(filepath_co, "r") as arquivo:  
-        for linha in arquivo:        
+
+    filepath_co = os.path.join(os.path.dirname(__file__), f"{nome_arquivo_entrada}.co")
+    with open(filepath_co, "r") as arquivo:
+        for linha in arquivo:
             linha_dividida = linha.split()
             
             vertice_origem = int(linha_dividida[1])
@@ -198,7 +202,68 @@ def carrega_teste():
     planilha.save("Algoritmo_Rota_2/Ativos_Russas.xlsx")
 
 
+def carrega_media_testes():
+    global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos, melhor_rota, caminho_entre_ativos, alg, iteracoes
+    
+    #algoritmos = ['BFS', 'DFS', 'BCU', 'A_Estrela_Euclidiano', 'A_Estrela_Haversiano']
+    planilha = openpyxl.Workbook()
+    del planilha['Sheet']
+    planilha.create_sheet(alg)
+
+    pagina = planilha[alg]
+    pagina.sheet_format.baseColWidth = 30
+    pagina.append(['Índice', 'Distancia', 'max', 'min', 'Tempo'])
+
+    sementes = [141592,653589,793238,462643,383279,502884,197169,399375,105820,974944,592307,816406,286208,998628,34825,342117,67982,148086,513282,306647,93844,609550,582231,725359,408128,481117,450284,102701,938521,105559]
+    
+    for c in range(10): # qtd de testes
+        todas_distancias = 0
+        todos_tempos = 0
+
+        lista_melores_rotas = []
+
+        qtd_vertices = len(graph_Coordenadas)
+
+        random.seed(sementes[c])
+        lista_inicio = []
+        lista_ativos = []
+        inicio = random.randint(1, qtd_vertices)
+        lista_inicio.append(inicio)
+        #qtd_ativos_teste = random.randint(1, qtd_vertices-1)
+        ativos = random.sample(range(1, qtd_vertices + 1), qtd_ativos)
+        lista_ativos.append(ativos)
+
+        for i in sementes:
+            random.seed(i)
+            melhor_rota = []
+            caminho_entre_ativos = []
+            distancia_entre_ativos = {}
+
+
+            # Inicializa as distâncias entre os ativos
+            distancia_entre_ativos[inicio] = {}
+            for ativo in ativos:
+                distancia_entre_ativos[ativo] = {}
+
+            inicio_tempo = time.time()
+            melhorar_Rota()
+            tempo_Rota = time.time() - inicio_tempo
+
+            print(f"{c} ; {i} ; {ativos} ; {melhor_rota[-1][1]}")
+
+            todas_distancias += melhor_rota[-1][1]
+            lista_melores_rotas.append(melhor_rota[-1][1])
+
+            todos_tempos += tempo_Rota
+            #print(f"{c} ; {i} = {melhor_rota[-1][1]} ; {tempo_Rota}")
+
+        pagina.append([c, todas_distancias / len(sementes), max(lista_melores_rotas), min(lista_melores_rotas), todos_tempos / len(sementes)])
+    texto = nome_arquivo_saida.split("\n")
+    planilha.save(f"Planilhas/{texto[0]}")
 
 if __name__ == "__main__":
+    qtd_ativos = int(sys.argv[1])
+    nome_arquivo_entrada = sys.argv[2]
+    nome_arquivo_saida = sys.argv[3]
     Carrega_Dados()
-    carrega_teste() 
+    carrega_media_testes()
