@@ -24,7 +24,6 @@ melhor_rota = []
 distancia_entre_ativos = {}
 caminho_entre_ativos = []
 
-
 graph_dist = {}
 graph_Coordenadas = {}
 qtd_vertices = 0
@@ -238,7 +237,6 @@ def carrega_media_testes():
             melhor_rota = []
             caminho_entre_ativos = []
             distancia_entre_ativos = {}
-
 
             # Inicializa as distâncias entre os ativos
             distancia_entre_ativos[inicio] = {}

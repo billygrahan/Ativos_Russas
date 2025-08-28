@@ -1,4 +1,4 @@
-python3 Rota.py 30 RUSSAS_MAPA_N81 Planilhas_2/PLN_AEH_81_30.xlsx "A_Estrela_Haversiano"
-python3 Rota.py 30 RUSSAS_MAPA_N81 Planilhas_2/PLN_AEE_81_30.xlsx "A_Estrela_Euclidiano"
-python3 Rota.py 30 RUSSAS_MAPA_N81 Planilhas_2/PLN_BFS_81_30.xlsx "BFS"
-python3 Rota.py 30 RUSSAS_MAPA_N81 Planilhas_2/PLN_BCU_81_30.xlsx "BCU"
+python3 Rota.py 5 RUSSAS_MAPA_N13 Planilhas/A_Estrela_Haversiano/PLN_13_5.xlsx "A_Estrela_Haversiano"
+python3 Rota.py 5 RUSSAS_MAPA_N13 Planilhas/A_Estrela_Euclidiano/PLN_13_5.xlsx "A_Estrela_Euclidiano"
+python3 Rota.py 5 RUSSAS_MAPA_N13 Planilhas/BCU/PLN_13_5.xlsx "BCU"
+python3 Rota.py 5 RUSSAS_MAPA_N13 Planilhas/BFS/PLN_13_5.xlsx "BFS"
