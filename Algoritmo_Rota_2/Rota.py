@@ -10,7 +10,6 @@ import psutil
 import openpyxl
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
 from Algoritmos.BFS import bfs
 from Algoritmos.DFS import dfs
 from Algoritmos.BCU import bcu
@@ -166,40 +165,45 @@ def carrega_teste():
 
     pagina = planilha[alg]
     pagina.sheet_format.baseColWidth = 30
-    pagina.append(['Índice', 'Origem', 'Ativos', 'melhor_caminho', 'Distancia', 'Tempo'])
+    pagina.append(['Índice', 'inicio', 'Distancia', 'ativos', 'melhor rota', 'caminho', 'Tempo'])
 
-    sementes = [141592,653589,793238,462643,383279,502884,197169,399375,105820,974944,592307,816406,286208,998628,34825,342117,67982,148086,513282,306647,93844,609550,582231,725359,408128,481117,450284,102701,938521,105559]
-    
-    for c in range(10): # qtd de testes
+    sementes = [286208,998628,34825,342117,67982,148086,513282,306647,93844,609550,582231,725359,408128,481117,450284,102701,938521,105559]
+    #print("     INICIO      ;      ATIVOS      ;      MELHOR ROTA ENTRE ATIVOS      ;      CAMINHO TOTAL     ")
+    for c in range(3): # qtd de testes
+        random.seed(sementes[c])
+        qtd_vertices = len(graph_Coordenadas)
 
-        for i in sementes:
-            random.seed(i)
-            melhor_rota = []
-            caminho_entre_ativos = []
-            distancia_entre_ativos = {}
-            ativos = []
+        inicio = random.randint(1, qtd_vertices)
+        ativos = random.sample(range(1, qtd_vertices + 1), qtd_ativos)
 
-            qtd_vertices = len(graph_Coordenadas)
+        melhor_rota = []
+        caminho_entre_ativos = []
+        distancia_entre_ativos = {}
 
-            inicio = random.randint(1, qtd_vertices)
-            #qtd_ativos_teste = random.randint(1, qtd_vertices-1)
-            ativos = random.sample(range(1, qtd_vertices + 1), 5)
+        distancia_entre_ativos[inicio] = {}
+        for ativo in ativos:
+            distancia_entre_ativos[ativo] = {}
 
-            # Inicializa as distâncias entre os ativos
-            distancia_entre_ativos[inicio] = {}
-            for ativo in ativos:
-                distancia_entre_ativos[ativo] = {}
+        inicio_tempo = time.time()
+        melhorar_Rota()
+        tempo_Rota = time.time() - inicio_tempo
 
-            inicio_tempo = time.time()
-            melhorar_Rota()
-            tempo_Rota = time.time() - inicio_tempo
+        caminho_completo = [str(melhor_rota[0][0])]
+        for i in range(len(melhor_rota)-1):
+            # Procura o caminho entre melhor_rota[i][0] e melhor_rota[i+1][0]
+            for caminho in caminho_entre_ativos:
+                if melhor_rota[i][0] == caminho[0] and melhor_rota[i+1][0] == caminho[-1]:
+                    # Adiciona todos os vértices intermediários (exceto o primeiro, já está na lista)
+                    caminho_completo.extend(str(v) for v in caminho[1:])
+                    break  # achou o caminho, não precisa procurar mais
 
-            #print(f"{c} ; {i} = {melhor_rota[-1][1]} ; {tempo_Rota}")
+        caminho_str = " -> ".join(caminho_completo)
 
-            pagina.append([c, inicio, ", ".join(str(a) for a in ativos), " -> ".join(str(a[0]) for a in melhor_rota), melhor_rota[-1][1], tempo_Rota])
-
-    planilha.save("Algoritmo_Rota_2/Ativos_Russas.xlsx")
-
+        print(f"{alg} ; INICIO: {inicio} ; ATIVOS: {", ".join(str(a) for a in ativos)} ; MELHOR ROTA ENTRE ATIVOS: {" -> ".join(str(a[0]) for a in melhor_rota)} ; CAMINHO TOTAL: {caminho_str}")
+        # Exemplo de uso na planilha:
+        pagina.append([0, inicio, melhor_rota[-1][1], ", ".join(str(a) for a in ativos), " -> ".join(str(v[0]) for v in melhor_rota), caminho_str, tempo_Rota])
+    # Garante que o diretório existe
+    planilha.save(nome_arquivo_saida.strip())
 
 def carrega_media_testes():
     global graph_dist, graph_Coordenadas, qtd_vertices, ativos, inicio, distancia_entre_ativos, melhor_rota, caminho_entre_ativos, alg, iteracoes
@@ -265,4 +269,5 @@ if __name__ == "__main__":
     nome_arquivo_saida = sys.argv[3]
     alg = sys.argv[4].strip()
     Carrega_Dados()
-    carrega_media_testes()
+    #carrega_media_testes()
+    carrega_teste()
